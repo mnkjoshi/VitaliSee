@@ -108,7 +108,10 @@ def saveGrowth(username):
         encodedStr = base64.b64encode(pictureFile.read())
 
         refGrowthPic.push().set(json.dumps(str(encodedStr)))
+
     refWaterDate.push().set(date)
+
+    os.remove(path)
 
     return 'Saved succesfully'
 
