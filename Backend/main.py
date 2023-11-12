@@ -14,7 +14,7 @@ firebase_admin.initialize_app(cred, {
 })
 
 # TODO: change uploads folder to a proper path
-app.config['UPLOAD_FOLDER'] = "uploads"
+app.config['UPLOAD_FOLDER'] = "./uploads"
 
 @app.route('/')
 def home():
@@ -75,6 +75,8 @@ def predict():
     file.save(filePath)
 
     res = disease_detection.predict(filePath)
+
+    os.remove(filePath)
 
     return res
     
