@@ -7,6 +7,7 @@ import os
 
 import base64
 import json
+import re
 
 import disease_detection
 
@@ -87,17 +88,21 @@ def predict():
 
 @app.route('/<username>/save-growth', methods=['post'])
 def saveGrowth(username):
+    datePattern = re.compile(r'^\d{2}-\d{2}-\d{4}$')
+                             
     if 'file' not in request.files:
         return 'File not received'
     
     picture = request.files['file']
     date = request.form['date']
 
+    if not datePattern.match(date):
+        return 'Date does not follow "DD-MM-YYYY"'
+
     refGrowthPic = db.reference(f'data/uTrackers/{username}/growth')
-    refWaterDate = db.reference(f'data/uTrackers/{username}/waterSchedule')
 
     # Ensure file extension allowed
-    if (picture.filename.split(".")[-1] not in ALLOWED_EXTENSIONS):
+    if (not picture.filename or picture.filename.split(".")[-1] not in ALLOWED_EXTENSIONS):
         return 'Invalid file type'
     
     pictureName = secure_filename(picture.filename)
@@ -107,11 +112,12 @@ def saveGrowth(username):
     with open(path, "rb") as pictureFile:
         encodedStr = base64.b64encode(pictureFile.read())
 
-        refGrowthPic.push().set(json.dumps(str(encodedStr)))
+        refGrowthPic.set({date: json.dumps(str(encodedStr))})
 
-    refWaterDate.push().set(date)
 
     os.remove(path)
 
     return 'Saved succesfully'
 
+
+    
