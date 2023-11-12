@@ -1,30 +1,38 @@
-import tensorflow as tf
-from PIL import Image
 import numpy as np
+from io import BytesIO
+from PIL import Image
+import tensorflow as tf
 
-model = None
-class_names = ["Early Blight", "Late Blight", "Healthy"]
+
 
 def load_model():
     global model
     if model is None:
-        model = tf.keras.models.load_model("/content/potato_Detection.h5")  # Replace with your actual model path
+      model = tf.keras.models.load_model("/3")
+      
 
-def preprocess_image(image_path):
-    image = np.array(
-        Image.open(image_path).convert("RGB").resize((256, 256))
-    )
-    image = image / 255.0  # Normalize to [0, 1]
+def read_file_as_image(data) -> np.ndarray:
+    image = np.array(Image.open(BytesIO(data)))
     return image
 
-def predict(image_path):
+def predict(file_path):
     load_model()
-    image = preprocess_image(image_path)
-    img_array = tf.expand_dims(image, 0)
-    predictions = model.predict(img_array)
-    predicted_class = class_names[np.argmax(predictions[0])]
-    confidence = round(np.max(predictions[0]), 2)
-    return {"class": predicted_class, "confidence": confidence}
+    CLASS_NAMES = ['Pepper__bell___Bacterial_spot', 'Pepper__bell___healthy', 'Potato___Early_blight',
+               'Potato___Late_blight', 'Potato___healthy', 'Tomato_Bacterial_spot', 'Tomato_Early_blight',
+               'Tomato_Late_blight', 'Tomato_Leaf_Mold', 'Tomato_Septoria_leaf_spot',
+               'Tomato_Spider_mites_Two_spotted_spider_mite', 'Tomato__Target_Spot',
+               'Tomato__YellowLeaf__Curl_Virus', 'Tomato__mosaic_virus', 'Tomato_healthy']
+    with open(file_path, "rb") as f:
+        image = read_file_as_image(f.read())
 
-result = predict('/content/potato_exe.jpeg')
-print(result)
+    img_batch = np.expand_dims(image, 0)
+    prediction = MODEL.predict(img_batch)
+    predicted_class = CLASS_NAMES[np.argmax(prediction[0])]
+    confidence = np.max(prediction[0])
+
+    return {'class': predicted_class, 'confidence': float(confidence)}
+
+if __name__ == "__main__":
+    image_file_path = "potato_exl.jpeg"  # Replace with the path to your image file
+    result = predict(image_file_path)
+    print(result)
