@@ -24,7 +24,12 @@ def signup():
     username = request.form['username']
     password = request.form['password']
 
-    user = auth.create_user(
-        username=username,
-        password=password
-    )
+    try:
+        user = auth.create_user(
+            email=username,
+            password=password
+        )
+    except auth.EmailAlreadyExistsError:
+        return 'Email already in use'
+    
+    return 'Create user successful'
