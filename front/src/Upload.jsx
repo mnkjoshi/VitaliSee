@@ -5,8 +5,8 @@ import { useDropzone } from 'react-dropzone'
 
 export default function Upload() {
 
-    const { file, prediction, description, isLoading, onDrop } =
-        useFormUpload()
+    /*const { file, prediction, description, isLoading, onDrop } =
+        useFormUpload()*/
 
     const { getRootProps, getInputProps, isDragActive } =
         useDropzone({ onDrop, accept: 'image/jpeg, image/png, image/jpg, image/tif' })
