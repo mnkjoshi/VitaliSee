@@ -3,7 +3,7 @@ from io import BytesIO
 from PIL import Image
 import tensorflow as tf
 
-MODEL = tf.keras.models.load_model("/content/3")
+MODEL = tf.keras.models.load_model("/3")
 CLASS_NAMES = ['Pepper__bell___Bacterial_spot', 'Pepper__bell___healthy', 'Potato___Early_blight',
                'Potato___Late_blight', 'Potato___healthy', 'Tomato_Bacterial_spot', 'Tomato_Early_blight',
                'Tomato_Late_blight', 'Tomato_Leaf_Mold', 'Tomato_Septoria_leaf_spot',
