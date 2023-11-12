@@ -18,8 +18,8 @@ firebase_admin.initialize_app(cred, {
 })
 
 ALLOWED_EXTENSIONS = ['jpeg']
+DATE_PATTERN = re.compile(r'^\d{2}-\d{2}-\d{4}$')
 
-# TODO: change uploads folder to a proper path
 app.config['UPLOAD_FOLDER'] = "./uploads"
 
 @app.route('/')
@@ -84,11 +84,10 @@ def predict():
     os.remove(filePath)
 
     return res
-    
 
 @app.route('/<username>/save-growth', methods=['post'])
 def saveGrowth(username):
-    datePattern = re.compile(r'^\d{2}-\d{2}-\d{4}$')
+    
                              
     if 'file' not in request.files:
         return 'File not received'
@@ -96,7 +95,7 @@ def saveGrowth(username):
     picture = request.files['file']
     date = request.form['date']
 
-    if not datePattern.match(date):
+    if not DATE_PATTERN.match(date):
         return 'Date does not follow "DD-MM-YYYY"'
 
     refGrowthPic = db.reference(f'data/uTrackers/{username}/growth')
@@ -110,7 +109,7 @@ def saveGrowth(username):
     picture.save(path)
 
     with open(path, "rb") as pictureFile:
-        encodedStr = base64.b64encode(pictureFile.read())
+        encodedStr = base64.b64encode(pictureFile.read()).decode('utf-8')
 
         refGrowthPic.set({date: json.dumps(str(encodedStr))})
 
@@ -120,4 +119,19 @@ def saveGrowth(username):
     return 'Saved succesfully'
 
 
+@app.route('/<username>/<date>', methods=['get'])
+def getGrowth(username, date):
+    if not DATE_PATTERN.match(date):
+        return 'Date does not follow "DD-MM-YYYY"'
     
+    jsonPhoto = db.reference(f'data/uTrackers/{username}/growth/{date}').get()
+
+    if not jsonPhoto:
+        return 'Date does not exist'
+    
+    # Save photo in folder
+    with open('uploads/img.jpeg', 'wb') as photo:
+        photoBytes = base64.b64decode(json.loads((str(jsonPhoto))))
+        photo.write(photoBytes)
+  
+    return photoBytes
