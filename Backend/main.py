@@ -1,7 +1,14 @@
 from flask import Flask, request, jsonify
-from firebase_admin import auth, exceptions
+from firebase_admin import auth
+
+from werkzeug.utils import secure_filename
+import os
+
 
 app = Flask(__name__)
+
+# TODO: change uploads folder to a proper path
+app.config['UPLOAD_FOLDER'] = "uploads"
 
 @app.route('/login', methods=['post'])
 def login():
@@ -32,3 +39,24 @@ def signup():
         return 'Email already in use'
     
     return 'Create user successful'
+
+@app.route('predict', methods=['post'])
+def predict():
+    allowedExtensions = ['jpeg']
+
+    if 'file' not in request.files:
+        return 'File not received'
+    
+    file = request.files['file']
+
+    # Ensure file extension allowed
+    if (file.filename.split(".")[-1] not in allowedExtensions):
+        return 'Invalid file type'
+    
+    filename = secure_filename(file.filename)
+    file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+    return 'Upload image successful'
+    
+
+
