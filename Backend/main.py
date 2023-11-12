@@ -87,7 +87,7 @@ def predict():
         diseaseData = db.reference('data/locations/').get()
         disRef = db.reference('data/locations/' + len(diseaseData))
         disRef.set(locationToSet)
-    return res
+    return res['class']
 
 @app.route('/<username>/save-growth', methods=['post'])
 def saveGrowth(username):
