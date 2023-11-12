@@ -1,19 +1,25 @@
 import firebase_admin
 from flask import Flask, request, jsonify
-from firebase_admin import auth, credentials
+from firebase_admin import auth, credentials, db
 
 from werkzeug.utils import secure_filename
 import os
 
 
 app = Flask(__name__)
-cred = credentials.Certificate("C:/Users/justw/Documents/Retailability/Backend/secret/vitalisee-52dc6-aa33f0e0c368.json")
+cred = credentials.Certificate("vitalisee-52dc6-aa33f0e0c368.json")
 firebase_admin.initialize_app(cred, {
     'databaseURL': 'https://vitalisee-52dc6-default-rtdb.firebaseio.com/'
 })
 
 # TODO: change uploads folder to a proper path
 app.config['UPLOAD_FOLDER'] = "uploads"
+
+@app.route('/')
+def home():
+    # Retrieve data from Firebase
+    data = db.reference('data/users/john').get()
+    return jsonify(data)
 
 @app.route('/login', methods=['post'])
 def login():
@@ -22,11 +28,13 @@ def login():
 
     # Check the username and password against Firebase
     try:
-        user = auth.get_user_by_email(username)
-        if auth.verify_id_token(user.uid, password):
-            return 'Login successful'
+        userdata = db.reference('data/users/' + username).get()
+        if userdata:
+            if password == userdata["password"]:
+                 return 'Login successful'
+            return 'Incorrect password'
         else:
-            return 'Invalid password'
+            return 'Invalid username'
     except auth.UserNotFoundError:
         return 'Invalid username'
     
