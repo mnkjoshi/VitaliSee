@@ -5,6 +5,7 @@ from firebase_admin import auth, credentials, db
 from werkzeug.utils import secure_filename
 import os
 
+import disease_detection
 
 app = Flask(__name__)
 cred = credentials.Certificate("secret.json")
@@ -70,9 +71,12 @@ def predict():
         return 'Invalid file type'
     
     filename = secure_filename(file.filename)
-    file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+    filePath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    file.save(filePath)
 
-    return 'Upload image successful'
+    res = disease_detection.predict(filePath)
+
+    return res
     
 
 
