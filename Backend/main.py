@@ -5,6 +5,9 @@ from firebase_admin import auth, credentials, db
 from werkzeug.utils import secure_filename
 import os
 
+import base64
+import json
+
 import disease_detection
 
 app = Flask(__name__)
@@ -82,4 +85,30 @@ def predict():
     return res
     
 
+@app.route('/<username>/save-growth', methods=['post'])
+def saveGrowth(username):
+    if 'file' not in request.files:
+        return 'File not received'
+    
+    picture = request.files['file']
+    date = request.form['date']
+
+    refGrowthPic = db.reference(f'data/uTrackers/{username}/growth')
+    refWaterDate = db.reference(f'data/uTrackers/{username}/waterSchedule')
+
+    # Ensure file extension allowed
+    if (picture.filename.split(".")[-1] not in ALLOWED_EXTENSIONS):
+        return 'Invalid file type'
+    
+    pictureName = secure_filename(picture.filename)
+    path = os.path.join(app.config['UPLOAD_FOLDER'], pictureName)
+    picture.save(path)
+
+    with open(path, "rb") as pictureFile:
+        encodedStr = base64.b64encode(pictureFile.read())
+
+        refGrowthPic.push().set(json.dumps(str(encodedStr)))
+    refWaterDate.push().set(date)
+
+    return 'Saved succesfully'
 
