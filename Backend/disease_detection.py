@@ -26,6 +26,6 @@ def predict(file_path):
     return {'class': predicted_class, 'confidence': float(confidence)}
 
 if __name__ == "__main__":
-    image_file_path = "/content/potato_exl.jpeg"  # Replace with the path to your image file
+    image_file_path = "potato_exl.jpeg"  # Replace with the path to your image file
     result = predict(image_file_path)
     print(result)
