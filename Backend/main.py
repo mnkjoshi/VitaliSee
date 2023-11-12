@@ -13,6 +13,8 @@ firebase_admin.initialize_app(cred, {
     'databaseURL': 'https://vitalisee-52dc6-default-rtdb.firebaseio.com/'
 })
 
+ALLOWED_EXTENSIONS = ['jpeg']
+
 # TODO: change uploads folder to a proper path
 app.config['UPLOAD_FOLDER'] = "./uploads"
 
@@ -59,7 +61,6 @@ def signup():
 
 @app.route('/predict', methods=['post'])
 def predict():
-    allowedExtensions = ['jpeg']
 
     if 'file' not in request.files:
         return 'File not received'
@@ -67,7 +68,7 @@ def predict():
     file = request.files['file']
 
     # Ensure file extension allowed
-    if (file.filename.split(".")[-1] not in allowedExtensions):
+    if (file.filename.split(".")[-1] not in ALLOWED_EXTENSIONS):
         return 'Invalid file type'
     
     filename = secure_filename(file.filename)
