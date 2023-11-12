@@ -1,8 +1,7 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from firebase_admin import auth, exceptions
 
 app = Flask(__name__)
-
 
 @app.route('/login', methods=['post'])
 def login():
