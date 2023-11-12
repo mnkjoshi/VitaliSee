@@ -8,7 +8,7 @@ import tensorflow as tf
 def load_model():
     global model
     if model is None:
-      model = tf.keras.models.load_model("/3")
+      model = tf.keras.models.load_model("/Model")
       
 
 def read_file_as_image(data) -> np.ndarray:
