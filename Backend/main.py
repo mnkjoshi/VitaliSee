@@ -7,7 +7,7 @@ import os
 
 
 app = Flask(__name__)
-cred = credentials.Certificate("vitalisee-52dc6-aa33f0e0c368.json")
+cred = credentials.Certificate("secret.json")
 firebase_admin.initialize_app(cred, {
     'databaseURL': 'https://vitalisee-52dc6-default-rtdb.firebaseio.com/'
 })
@@ -43,15 +43,18 @@ def signup():
     username = request.form['username']
     password = request.form['password']
 
-    try:
-        user = auth.create_user(
-            email=username,
-            password=password
-        )
-    except auth.EmailAlreadyExistsError:
-        return 'Email already in use'
+    if not username.isalpha():
+        return 'Username can only be alphabetical'
+
+    ref = db.reference('data/users/' + username)
+
+    if ref.get():
+        return 'User already exists'
     
-    return 'Create user successful'
+    ref.set({'password': password})
+
+    return 'Created user successfully'
+    
 
 @app.route('/predict', methods=['post'])
 def predict():
