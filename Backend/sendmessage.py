@@ -1,14 +1,8 @@
 from twilio.rest import Client
+from disease_detection import predict
 
-# Twilio credentials
-account_sid = 'your_account_sid'
-auth_token = 'your_auth_token'
-twilio_phone_number = 'your_twilio_phone_number'
-user_phone_number = 'user_phone_number'  # Replace with the user's actual phone number
-
-client = Client(account_sid, auth_token)
-
-def send_sms(message):
+def send_sms(account_sid,auth_token,twilio_phone_number,user_phone_number, message):
+    client = Client(account_sid, auth_token)
     message = client.messages.create(
         body=message,
         from_=twilio_phone_number,
@@ -19,7 +13,6 @@ def send_sms(message):
 def predict_and_notify(file_path):
     result = predict(file_path)
     print(result)
-
     # Check if the predicted class is not healthy
     if result['class'] not in ['Potato___healthy', 'Tomato_healthy', 'Pepper__bell___healthy']:
         message = f"Alert: Unhealthy plant detected - Class: {result['class']}, Confidence: {result['confidence']}"
