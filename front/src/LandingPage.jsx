@@ -10,7 +10,7 @@ function LandingPage(){
                 <h3>Revolutionize crop health by accurately detecting and diagnosing diseases in plants.</h3>
                 <div className="btn-loc">
 
-                  <button className="login" onClick={() => window.location.href = 'Login.js'}>Get Started</button>
+                  <button className="login" onClick={() => window.location.href = 'Login.jsx'}>Get Started</button>
 
                   
                 </div>
