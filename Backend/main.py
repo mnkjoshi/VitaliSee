@@ -10,6 +10,7 @@ import json
 import re
 
 import disease_detection
+import extension
 
 app = Flask(__name__)
 cred = credentials.Certificate("secret.json")
@@ -70,7 +71,7 @@ def predict():
         return 'File not received'
     
     file = request.files['file']
-
+    locationToSet = request.form['location']
     # Ensure file extension allowed
     if (not file.filename or file.filename.split(".")[-1] not in ALLOWED_EXTENSIONS):
         return 'Invalid file type'
@@ -82,7 +83,10 @@ def predict():
     res = disease_detection.predict(filePath)
 
     os.remove(filePath)
-
+    if res['class'] not in ['Potato___healthy', 'Tomato_healthy', 'Pepper__bell___healthy'] and locationToSet:
+        diseaseData = db.reference('data/locations/').get()
+        disRef = db.reference('data/locations/' + len(diseaseData))
+        disRef.set(locationToSet)
     return res
 
 @app.route('/<username>/save-growth', methods=['post'])
