@@ -37,7 +37,7 @@ def login():
     try:
         userdata = db.reference('data/users/' + username).get()
         if userdata:
-            if password == userdata["password"]:
+            if password == userdata["password"]: # type: ignore
                  return 'Login successful'
             return 'Incorrect password'
         else:
@@ -72,7 +72,7 @@ def predict():
     file = request.files['file']
 
     # Ensure file extension allowed
-    if (file.filename.split(".")[-1] not in ALLOWED_EXTENSIONS):
+    if (not file.filename or file.filename.split(".")[-1] not in ALLOWED_EXTENSIONS):
         return 'Invalid file type'
     
     filename = secure_filename(file.filename)
