@@ -22,6 +22,6 @@ def predict_and_notify(file_path):
         print("No action needed.")
 
 if __name__ == "__main__":
-    image_file_path = "potato_exl.jpeg"  # Replace with the path to your image file
-    predict_and_notify(image_file_path)
+    image_file_path = "potato_exl.jpeg"  
+    predict_and_notify(image_file_path) 
 
