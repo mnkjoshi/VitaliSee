@@ -97,6 +97,9 @@ def saveGrowth(username):
 
     if not DATE_PATTERN.match(date):
         return 'Date does not follow "DD-MM-YYYY"'
+    
+    if db.reference(f'data/uTrackers/{username}/growth/{date}').get():
+        return 'Photo on date already exists'
 
     refGrowthPic = db.reference(f'data/uTrackers/{username}/growth')
 
