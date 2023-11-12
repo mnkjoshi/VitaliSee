@@ -1,6 +1,6 @@
 import React from 'react'
 import uploadSVG from '../assets/uploadImage.svg'
-import { useFormUpload } from '../components/useFormUpload'
+/*import { useFormUpload } from '../components/useFormUpload'*/
 import { useDropzone } from 'react-dropzone'
 
 export default function Upload() {
@@ -17,8 +17,8 @@ export default function Upload() {
              (  <div className="grid place-items-center">
 
                     <div className="grid place-items-center py-5">
-                        <div className="flex flex-row text-5xl font-bold text-[#246125]">Check Diseases <span></span></div>
-                        <div className='bg-blue-500 h-1 w-36 my-2 rounded-lg'></div>
+                        <div className="flex flex-row text-5xl font-bold text-[#246125]">Check Diseases</div>
+                        <div className='bg-lime-500 h-1 w-36 my-2 rounded-lg'></div>
                     </div>
 
                     <div className="py-6">
