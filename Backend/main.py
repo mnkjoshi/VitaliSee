@@ -25,7 +25,7 @@ def login():
     except auth.UserNotFoundError:
         return 'Invalid username'
     
-@app.route('signup', methods=['post'])
+@app.route('/signup', methods=['post'])
 def signup():
     username = request.form['username']
     password = request.form['password']
@@ -40,7 +40,7 @@ def signup():
     
     return 'Create user successful'
 
-@app.route('predict', methods=['post'])
+@app.route('/predict', methods=['post'])
 def predict():
     allowedExtensions = ['jpeg']
 
