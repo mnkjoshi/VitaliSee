@@ -16,5 +16,15 @@ def login():
             return 'Login successful'
         else:
             return 'Invalid password'
-    except auth.ErrorInfo:
+    except auth.UserNotFoundError:
         return 'Invalid username'
+    
+@app.route('signup', methods=['post'])
+def signup():
+    username = request.form['username']
+    password = request.form['password']
+
+    user = auth.create_user(
+        username=username,
+        password=password
+    )
