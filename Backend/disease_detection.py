@@ -3,10 +3,11 @@ from io import BytesIO
 from PIL import Image
 import tensorflow as tf
 
-
+model = None
 
 def load_model():
-    global model = tf.keras.models.load_model("/Model")
+    global model 
+    model= tf.keras.models.load_model("./Model")
 
 def read_file_as_image(data) -> np.ndarray:
     image = np.array(Image.open(BytesIO(data)))
@@ -23,7 +24,7 @@ def predict(file_path):
         image = read_file_as_image(f.read())
 
     img_batch = np.expand_dims(image, 0)
-    prediction = MODEL.predict(img_batch)
+    prediction = model.predict(img_batch)
     predicted_class = CLASS_NAMES[np.argmax(prediction[0])]
     confidence = np.max(prediction[0])
 

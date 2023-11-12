@@ -5,15 +5,16 @@ from firebase_admin import auth, credentials, db
 from werkzeug.utils import secure_filename
 import os
 
+import disease_detection
 
 app = Flask(__name__)
-cred = credentials.Certificate("vitalisee-52dc6-aa33f0e0c368.json")
+cred = credentials.Certificate("secret.json")
 firebase_admin.initialize_app(cred, {
     'databaseURL': 'https://vitalisee-52dc6-default-rtdb.firebaseio.com/'
 })
 
 # TODO: change uploads folder to a proper path
-app.config['UPLOAD_FOLDER'] = "uploads"
+app.config['UPLOAD_FOLDER'] = "./uploads"
 
 @app.route('/')
 def home():
@@ -43,15 +44,18 @@ def signup():
     username = request.form['username']
     password = request.form['password']
 
-    try:
-        user = auth.create_user(
-            email=username,
-            password=password
-        )
-    except auth.EmailAlreadyExistsError:
-        return 'Email already in use'
+    if not username.isalpha():
+        return 'Username can only be alphabetical'
+
+    ref = db.reference('data/users/' + username)
+
+    if ref.get():
+        return 'User already exists'
     
-    return 'Create user successful'
+    ref.set({'password': password})
+
+    return 'Created user successfully'
+    
 
 @app.route('/predict', methods=['post'])
 def predict():
@@ -67,9 +71,14 @@ def predict():
         return 'Invalid file type'
     
     filename = secure_filename(file.filename)
-    file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+    filePath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    file.save(filePath)
 
-    return 'Upload image successful'
+    res = disease_detection.predict(filePath)
+
+    os.remove(filePath)
+
+    return res
     
 
 
